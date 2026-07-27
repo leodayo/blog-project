@@ -2,8 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     data::post_repository::PostRepository,
-    domain::{error::AppError, post::Post},
-    presentation::middleware::UserContext,
+    domain::{error::AppError, post::Post, user::UserContext},
 };
 
 pub struct BlogService {

@@ -3,19 +3,10 @@ use std::{future, sync::Arc};
 use actix_web::{FromRequest, HttpMessage, dev::ServiceRequest};
 use actix_web_httpauth::{extractors::bearer::BearerAuth, middleware::HttpAuthentication};
 
-use crate::infrastructure::jwt::JwtService;
-
-#[derive(Debug, Clone)]
-pub struct AuthenticatedUser {
-    pub id: i64,
-    pub username: String,
-}
-
-#[derive(Debug, Clone)]
-pub enum UserContext {
-    Authenticated(AuthenticatedUser),
-    Anonymous,
-}
+use crate::{
+    domain::user::{AuthenticatedUser, UserContext},
+    infrastructure::jwt::JwtService,
+};
 
 impl FromRequest for UserContext {
     type Error = actix_web::Error;

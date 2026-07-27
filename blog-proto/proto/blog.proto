@@ -15,11 +15,18 @@ service BlogService {
     rpc ListPosts(ListPostsRequest) returns (ListPostsResponse);
 }
 
-message RegisterRequest {}
-message LoginRequest {}
+message RegisterRequest {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+}
 
 message User {
-    string id = 1;
+    int64 id = 1;
     string username = 2;
     string email = 3;
 }
@@ -30,10 +37,10 @@ message AuthResponse {
 }
 
 message Post {
-    string id = 1;
+    int64 id = 1;
     string title = 2;
     string content = 3;
-    string author_id = 4;
+    int64 author_id = 4;
     google.protobuf.Timestamp created_at = 5;
     google.protobuf.Timestamp updated_at = 6;
 }
@@ -44,25 +51,25 @@ message CreatePostRequest {
 }
 
 message GetPostRequest {
-    string id = 1;
+    int64 id = 1;
 }
 
 message UpdatePostRequest {
-    string id = 1;
+    int64 id = 1;
     string title = 2;
     string content = 3;
 }
 
 message DeletePostRequest {
-    string id = 1;
+    int64 id = 1;
 }
 
 message ListPostsRequest {
-    int32 page = 1;
-    int32 limit = 2;
+    int64 page = 1;
+    int64 limit = 2;
 }
 
 message ListPostsResponse {
     repeated Post posts = 1;
-    int32 total = 2;
+    int64 total = 2;
 }

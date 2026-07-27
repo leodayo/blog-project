@@ -10,3 +10,25 @@ pub struct User {
     pub password_hash: String,
     pub created_at: DateTime<Utc>,
 }
+
+impl From<User> for blog_proto::User {
+    fn from(user: User) -> Self {
+        blog_proto::User {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct AuthenticatedUser {
+    pub id: i64,
+    pub username: String,
+}
+
+#[derive(Debug, Clone)]
+pub enum UserContext {
+    Authenticated(AuthenticatedUser),
+    Anonymous,
+}

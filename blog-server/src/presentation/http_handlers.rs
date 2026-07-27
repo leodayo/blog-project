@@ -11,8 +11,7 @@ use crate::{
             post::{CreatePostRequest, ListPostsResponse, UpdatePostRequest},
         },
     },
-    domain::error::AppError,
-    presentation::middleware::UserContext,
+    domain::{error::AppError, user::UserContext},
 };
 
 pub async fn register(

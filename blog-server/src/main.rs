@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use actix_web::{App, HttpServer, web};
+use blog_proto::blog_service_server::BlogServiceServer;
 
 use crate::{
     application::{auth_service::AuthService, blog_service::BlogService},
@@ -10,10 +11,12 @@ use crate::{
         jwt::JwtService,
     },
     presentation::{
+        actix_middleware::create_auth_middleware,
+        grpc_middleware::grpc_auth_interceptor,
+        grpc_service::BlogGrpcService,
         http_handlers::{
             create_post, delete_post, get_post, list_posts, login, register, update_post,
         },
-        middleware::create_auth_middleware,
     },
 };
 
@@ -45,8 +48,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         jwt_service.clone(),
     ));
     let blog_service = Arc::new(BlogService::new(post_repository.clone()));
+    let grpc_service = BlogGrpcService::new(
+        auth_service.clone(),
+        blog_service.clone(),
+        jwt_service.clone(),
+    );
 
-    HttpServer::new(move || {
+    let grpc_server = tonic::transport::Server::builder()
+        .add_service(BlogServiceServer::with_interceptor(
+            grpc_service,
+            grpc_auth_interceptor(jwt_service.clone()),
+        ))
+        .serve(
+            "0.0.0.0:50051"
+                .parse()
+                .expect("failed to parse SocketAddr for the grpc server"),
+        );
+
+    let http_server = HttpServer::new(move || {
         let auth_middleware = create_auth_middleware(jwt_service.clone());
 
         App::new()
@@ -72,8 +91,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             )
     })
     .bind("127.0.0.1:8080")?
-    .run()
-    .await?;
+    .run();
+
+    // TODO() Consider graceful shutdown
+    tokio::select! {
+        res = http_server => {
+            if let Err(e) = res {
+                tracing::error!("HTTP server error: {}", e);
+            }
+        }
+        res = grpc_server => {
+            if let Err(e) = res {
+                tracing::error!("gRPC server error: {}", e);
+            }
+        }
+    }
 
     Ok(())
 }

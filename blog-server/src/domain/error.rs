@@ -57,3 +57,25 @@ impl ResponseError for AppError {
         HttpResponse::build(status).body(body)
     }
 }
+
+impl From<AppError> for tonic::Status {
+    fn from(error: AppError) -> Self {
+        match error {
+            AppError::UserNotFound(_) | AppError::PostNotFound(_) => {
+                Self::not_found(error.to_string())
+            }
+            AppError::UserAlreadyExists => Self::already_exists("User already exists"),
+            AppError::InvalidCredentials => Self::unauthenticated("Invalid credentials"),
+            AppError::Forbidden => Self::permission_denied("Permission denied"),
+            AppError::Unauthenticated => Self::unauthenticated("Authentication required"),
+            AppError::Db(e) => {
+                tracing::error!("Database error: {}", e);
+                Self::internal("Database error")
+            }
+            AppError::InternalError => {
+                tracing::error!("Internal error occurred: {}", error);
+                Self::internal("Internal error")
+            }
+        }
+    }
+}
