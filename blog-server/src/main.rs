@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
-use actix_web::{App, HttpServer, web};
+use actix_cors::Cors;
+use actix_web::{App, HttpServer, http::header, web};
 use blog_proto::blog_service_server::BlogServiceServer;
 
 use crate::{
@@ -21,6 +22,8 @@ use crate::{
     },
 };
 
+const CORS_MAX_AGE: usize = 3600;
+
 mod application;
 mod data;
 mod domain;
@@ -34,6 +37,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
+    let cors_allowrd_origins: Vec<String> = std::env::var("CORS_ALLOWED_ORIGINS")
+        .expect("CORS_ALLOWED_ORIGINS must be set")
+        .split(',')
+        .map(|s| s.trim().to_string())
+        .collect();
 
     let pool = create_pool(&database_url).await?;
     tracing::info!("Database connected");
@@ -70,7 +78,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let http_server = HttpServer::new(move || {
         let auth_middleware = create_auth_middleware(jwt_service.clone());
 
+        let mut cors = Cors::default();
+        for url in &cors_allowrd_origins {
+            cors = cors.allowed_origin(url);
+        }
+        cors = cors
+            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+            .allowed_headers(vec![
+                header::AUTHORIZATION,
+                header::ACCEPT,
+                header::CONTENT_TYPE,
+            ])
+            .max_age(CORS_MAX_AGE);
+
         App::new()
+            .wrap(cors)
             .app_data(web::Data::new(pool.clone()))
             .app_data(web::Data::new(jwt_service.clone()))
             .app_data(web::Data::new(auth_service.clone()))
