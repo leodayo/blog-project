@@ -5,3 +5,12 @@ edition = "2024"
 
 [dependencies]
 blog-proto = { workspace = true }
+reqwest = { version = "0.13", features = [ "json" ] }
+tonic = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
