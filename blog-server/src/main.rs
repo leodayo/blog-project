@@ -9,6 +9,7 @@ use crate::{
     infrastructure::{
         database::{create_pool, run_migrations},
         jwt::JwtService,
+        logging::configure_logger,
     },
     presentation::{
         actix_middleware::create_auth_middleware,
@@ -29,6 +30,7 @@ mod presentation;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenvy::dotenv().ok();
+    configure_logger();
 
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
