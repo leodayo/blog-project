@@ -18,6 +18,8 @@ pub enum BlogClientError {
     Forbidden,
     #[error("Invalid request")]
     InvalidRequest,
+    #[error("Invalid response")]
+    InvalidResponse,
 }
 
 impl From<tonic::Status> for BlogClientError {

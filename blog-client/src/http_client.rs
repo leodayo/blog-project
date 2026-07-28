@@ -173,6 +173,7 @@ fn process_response_status(status: StatusCode) -> Result<(), BlogClientError> {
         StatusCode::UNAUTHORIZED => Err(BlogClientError::Unauthorized),
         StatusCode::FORBIDDEN => Err(BlogClientError::Forbidden),
         StatusCode::BAD_REQUEST => Err(BlogClientError::InvalidRequest),
+        StatusCode::CONFLICT => Err(BlogClientError::InvalidRequest),
         _ => Ok(()),
     }
 }

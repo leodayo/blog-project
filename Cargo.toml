@@ -11,6 +11,7 @@ resolver = "3"
 
 [workspace.dependencies]
 blog-proto = { path = "blog-proto" }
+blog-client = { path = "blog-client" }
 
 tokio = "1.53"
 tonic = "0.14"
