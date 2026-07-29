@@ -1,61 +1,100 @@
-use crate::api;
 use crate::components::post_form::EditPostForm;
 use crate::dto::Post;
 use crate::state::use_state;
 use leptos::prelude::*;
 
 #[component]
-pub fn PostItem(post: Post) -> impl IntoView {
+pub fn PostItem(post: Post, delete_action: Action<i64, ()>) -> impl IntoView {
     let state = use_state();
     let editing = RwSignal::new(false);
-    let post_inner = post.clone();
 
     let author_id = post.author_id;
-    let is_author = move || state.user.get().map(|u| u.id == author_id).unwrap_or(false);
+    let post_id = post.id;
+    let title_sig = RwSignal::new(post.title);
+    let content_sig = RwSignal::new(post.content.unwrap_or_default());
 
-    let delete_action = Action::new_local(move |id: &i64| {
-        let id = *id;
-        let state = state.clone();
-        async move {
-            if let Some(token) = state.token.get() {
-                if api::delete_post(id, &token).await.is_ok() {
-                    state.posts.update(|posts| posts.retain(|p| p.id != id));
+    let formatted_date = post.created_at.format("%Y-%m-%d %H:%M:%S").to_string();
+
+    let author_name = move || {
+        state
+            .user
+            .get()
+            .map(|current_user| {
+                if current_user.id == author_id {
+                    current_user.username
+                } else {
+                    format!("User #{}", author_id)
                 }
-            }
-        }
-    });
+            })
+            .unwrap_or_else(|| format!("User #{}", author_id))
+    };
+
+    let is_author = move || {
+        state
+            .user
+            .get()
+            .map(|current_user| current_user.id == author_id)
+            .unwrap_or(false)
+    };
 
     let on_cancel = move |_| editing.set(false);
     let on_saved = move |_| editing.set(false);
 
     view! {
-        <li style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 0.5rem; border-radius: 4px;">
+        <li style="
+            background: white;
+            border-left: 3px solid #26e6e6;
+            border-radius: 0 8px 8px 0;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.01);
+            word-break: break-word;
+            overflow-wrap: break-word;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+        ">
             <Show
                 when=move || editing.get()
                 fallback=move || {
-                    let post_for_delete = post_inner.clone();
                     view! {
-                        <div>
-                            <h4 style="margin: 0 0 0.5rem 0;">{post_inner.title.clone()}</h4>
-                            <p style="margin: 0 0 0.5rem 0;">{post_inner.content.clone().unwrap_or_default()}</p>
-                            <small style="color: #666;">"By " {post_inner.author_id} " at " {post_inner.created_at.to_string()}</small>
-                            <Show when=is_author>
-                                <div style="margin-top: 0.5rem;">
-                                    <button on:click=move |_| editing.set(true)>"Edit"</button>
-                                    <button
-                                        on:click=move |_| { delete_action.dispatch(post_for_delete.id); }
-                                        style="margin-left: 0.5rem;"
-                                    >
-                                        "Delete"
-                                    </button>
-                                </div>
-                            </Show>
+                        <div style="display: flex; flex-direction: column; height: auto; width: 100%;">
+                            <h4 style="margin: 0 0 10px 0; font-size: 1.25rem; font-weight: 500; color: #1a202c; word-break: break-word;">
+                                {move || title_sig.get()}
+                            </h4>
+                            <p style="margin: 0 0 20px 0; color: #4a5568; line-height: 1.6; font-size: 0.95rem; word-break: break-word; white-space: pre-wrap;">
+                                {move || content_sig.get()}
+                            </p>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: auto;">
+                                <small style="color: #a0aec0; font-size: 0.8rem;">
+                                    "Author: " {author_name} " @ " {formatted_date.clone()}
+                                </small>
+
+                                <Show when=is_author>
+                                    <div style="display: flex; gap: 12px;">
+                                        <button
+                                            on:click=move |_| editing.set(true)
+                                            style="background: transparent; border: none; color: #26e6e6; cursor: pointer; font-size: 0.85rem; font-weight: 600;"
+                                        >
+                                            "Edit"
+                                        </button>
+                                        <button
+                                            on:click=move |_| { delete_action.dispatch(post_id); }
+                                            style="background: transparent; border: none; color: #ff7bf2; cursor: pointer; font-size: 0.85rem; font-weight: 600;"
+                                        >
+                                            "Delete"
+                                        </button>
+                                    </div>
+                                </Show>
+                            </div>
                         </div>
                     }
                 }
             >
                 <EditPostForm
-                    post=post.clone()
+                    id=post_id
+                    title=title_sig
+                    content=content_sig
                     on_cancel=on_cancel.clone()
                     on_saved=on_saved.clone()
                 />

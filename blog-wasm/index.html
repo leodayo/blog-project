@@ -5,32 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog</title>
     <style>
+        * {
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
         body {
             margin: 0;
+            padding: 0;
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #fafafa;
-        }
-        button {
-            background: #00bcd4;
-            color: white;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0097a7;
-        }
-        input, textarea {
-            padding: 0.4rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        hr {
-            border: none;
-            border-top: 1px solid #ddd;
+            background: #fcfdfe;
+            color: #2d3748;
+            min-height: 100vh;
         }
     </style>
 </head>
@@ -40,9 +25,7 @@
         async function run() {
             await init();
             hydrate();
-            console.log("WASM loaded and hydrated");
         }
-
         run().catch(console.error);
     </script>
 </body>

@@ -14,7 +14,7 @@ pub struct AppState {
 
 pub fn provide_state() {
     let token = RwSignal::new(storage::load_token());
-    let user = RwSignal::new(None);
+    let user = RwSignal::new(storage::load_user());
     let posts = RwSignal::new(Vec::new());
     let total = RwSignal::new(i64::default());
 

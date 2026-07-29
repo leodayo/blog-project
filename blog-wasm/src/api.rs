@@ -9,7 +9,6 @@ use crate::{
     error::ApiError,
 };
 
-// const API_PATH: &str = "/api";
 const API_PATH: &str = "http://localhost:8080/api";
 
 async fn request<T, B>(
@@ -93,8 +92,17 @@ pub async fn update_post(
 }
 
 pub async fn delete_post(id: i64, token: &str) -> Result<(), ApiError> {
-    let path = format!("/posts/{}", id);
-    let _: String = request(Method::DELETE, &path, None::<()>, Some(token)).await?;
+    let url = format!("{}{}/posts/{}", API_PATH, "", id);
+    let mut req = RequestBuilder::new(&url).method(Method::DELETE);
+    req = req.header("Authorization", &format!("Bearer {}", token));
+
+    let resp = req.send().await?;
+    if !resp.ok() {
+        return Err(ApiError::Http {
+            status: resp.status(),
+            body: resp.text().await.unwrap_or_default(),
+        });
+    }
 
     Ok(())
 }

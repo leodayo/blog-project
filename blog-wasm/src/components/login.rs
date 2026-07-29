@@ -1,19 +1,14 @@
+use crate::api;
 use crate::state::use_state;
 use crate::storage;
-use crate::{api, error::ApiError};
 use leptos::prelude::*;
-use leptos::{
-    IntoView, component,
-    reactive::{actions::Action, signal::RwSignal, traits::Set},
-    view,
-};
 
 #[component]
 pub fn LoginForm() -> impl IntoView {
     let state = use_state();
     let username = RwSignal::new(String::new());
     let password = RwSignal::new(String::new());
-    let error = RwSignal::new(None::<ApiError>);
+    let error_message = RwSignal::new(None::<String>);
 
     let login_action =
         Action::new_local(move |(input_username, input_password): &(String, String)| {
@@ -25,11 +20,21 @@ pub fn LoginForm() -> impl IntoView {
                 match api::login(&input_username, &input_password).await {
                     Ok(auth_resp) => {
                         state.token.set(Some(auth_resp.token.clone()));
-                        state.user.set(Some(auth_resp.user));
+                        state.user.set(Some(auth_resp.user.clone()));
                         storage::save_token(&auth_resp.token);
-                        error.set(None);
+                        storage::save_user(&auth_resp.user);
+                        error_message.set(None);
                     }
-                    Err(e) => error.set(Some(e)),
+                    Err(e) => match e {
+                        crate::error::ApiError::Http { status, .. } => {
+                            if status == 401 || status == 400 {
+                                error_message.set(Some("Invalid username or password".to_string()));
+                            } else {
+                                error_message.set(Some(format!("Server error: {}", status)));
+                            }
+                        }
+                        _ => error_message.set(Some("Network connection error".to_string())),
+                    },
                 }
             }
         });
@@ -37,41 +42,47 @@ pub fn LoginForm() -> impl IntoView {
     let loading = login_action.pending();
 
     view! {
-        <div style="margin-bottom: 1rem;">
-            <h3>"Login"</h3>
-            <form on:submit=move |ev| {
-                ev.prevent_default();
-                error.set(None);
-                login_action.dispatch((username.get(), password.get()));
-            }>
-                <div style="margin-bottom: 0.5rem;">
+        <form on:submit=move |ev| {
+            ev.prevent_default();
+            error_message.set(None);
+            login_action.dispatch((username.get(), password.get()));
+        }>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                <div style="flex: 1; min-width: 180px;">
                     <input
                         type="text"
                         placeholder="Username"
+                        style=crate::pages::home::INPUT_STYLE
+                        onfocus="this.style.borderColor='#00f0ff'"
+                        onblur="this.style.borderColor='#e2e8f0'"
                         prop:value=move || username.get()
                         on:input=move |ev| username.set(event_target_value(&ev))
                     />
                 </div>
-                <div style="margin-bottom: 0.5rem;">
+                <div style="flex: 1; min-width: 180px;">
                     <input
                         type="password"
                         placeholder="Password"
+                        style=crate::pages::home::INPUT_STYLE
+                        onfocus="this.style.borderColor='#00f0ff'"
+                        onblur="this.style.borderColor='#e2e8f0'"
                         prop:value=move || password.get()
                         on:input=move |ev| password.set(event_target_value(&ev))
                     />
                 </div>
-                <button type="submit" disabled=move || loading.get()>
-                    {move || if loading.get() { "Logging in..." } else { "Login" }}
-                </button>
+            </div>
 
-                {move || {
-                    error.with(|err_opt| {
-                        err_opt.as_ref().map(|err| view! {
-                            <p style="color: red; margin-top: 0.5rem;">{format!("{}", err)}</p>
-                        })
-                    })
-                }}
-            </form>
-        </div>
+            <div style="display: flex; justify-content: flex-end; align-items: center;">
+                <button type="submit" disabled=move || loading.get() style=crate::pages::home::BTN_CYAN>
+                    {move || if loading.get() { "Connecting..." } else { "Login" }}
+                </button>
+            </div>
+
+            {move || {
+                error_message.get().map(|msg| view! {
+                    <p style="color: #e53e3e; font-size: 0.85rem; margin-top: 8px; font-weight: 500;">{msg}</p>
+                })
+            }}
+        </form>
     }
 }
