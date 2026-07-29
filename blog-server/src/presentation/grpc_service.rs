@@ -5,6 +5,7 @@ use blog_proto::{
     AuthResponse, CreatePostRequest, DeletePostRequest, GetPostRequest, ListPostsRequest,
     ListPostsResponse, LoginRequest, Post, RegisterRequest, UpdatePostRequest, User,
 };
+use pbjson_types::Empty;
 use tonic::{Request, Response, Status};
 
 use crate::application::auth_service::AuthService;
@@ -104,13 +105,13 @@ impl BlogService for BlogGrpcService {
     async fn delete_post(
         &self,
         request: Request<DeletePostRequest>,
-    ) -> Result<Response<()>, Status> {
+    ) -> Result<Response<Empty>, Status> {
         let user = request.require_authenticated()?;
         let req = request.into_inner();
 
         self.blog_service.delete_post(req.id, user).await?;
 
-        Ok(Response::new(()))
+        Ok(Response::new(Empty {}))
     }
     async fn list_posts(
         &self,

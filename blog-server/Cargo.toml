@@ -22,3 +22,4 @@ anyhow = { workspace = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = [ "env-filter", "fmt" ] }
+pbjson-types = { workspace = true }
