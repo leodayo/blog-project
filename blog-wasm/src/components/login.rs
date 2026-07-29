@@ -52,7 +52,7 @@ pub fn LoginForm() -> impl IntoView {
                     <input
                         type="text"
                         placeholder="Username"
-                        style=crate::pages::home::INPUT_STYLE
+                        style=crate::components::styles::INPUT_STYLE
                         onfocus="this.style.borderColor='#00f0ff'"
                         onblur="this.style.borderColor='#e2e8f0'"
                         prop:value=move || username.get()
@@ -63,7 +63,7 @@ pub fn LoginForm() -> impl IntoView {
                     <input
                         type="password"
                         placeholder="Password"
-                        style=crate::pages::home::INPUT_STYLE
+                        style=crate::components::styles::INPUT_STYLE
                         onfocus="this.style.borderColor='#00f0ff'"
                         onblur="this.style.borderColor='#e2e8f0'"
                         prop:value=move || password.get()
@@ -73,7 +73,7 @@ pub fn LoginForm() -> impl IntoView {
             </div>
 
             <div style="display: flex; justify-content: flex-end; align-items: center;">
-                <button type="submit" disabled=move || loading.get() style=crate::pages::home::BTN_CYAN>
+                <button type="submit" disabled=move || loading.get() style=crate::components::styles::BTN_CYAN>
                     {move || if loading.get() { "Connecting..." } else { "Login" }}
                 </button>
             </div>

@@ -7,15 +7,31 @@
     <style>
         * {
             box-sizing: border-box;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
         body {
             margin: 0;
             padding: 0;
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #fcfdfe;
+            background: #f4f7f9;
             color: #2d3748;
             min-height: 100vh;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+        @keyframes skeletonPulse {
+            0% { background-color: #edf2f7; }
+            50% { background-color: #e2e8f0; }
+            100% { background-color: #edf2f7; }
+        }
+        .post-animate-in {
+            animation: fadeIn 0.15s ease-out forwards;
+        }
+        .skeleton-line {
+            animation: skeletonPulse 1.5s infinite ease-in-out;
+            border-radius: 4px;
         }
     </style>
 </head>

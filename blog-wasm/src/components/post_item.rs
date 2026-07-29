@@ -41,9 +41,9 @@ pub fn PostItem(post: Post, delete_action: Action<i64, ()>) -> impl IntoView {
     let on_saved = move |_| editing.set(false);
 
     view! {
-        <li style="
+        <li class="post-animate-in" style="
             background: white;
-            border-left: 3px solid #26e6e6;
+            border-left: 3px solid #00c2e0;
             border-radius: 0 8px 8px 0;
             padding: 24px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.01);
@@ -74,13 +74,17 @@ pub fn PostItem(post: Post, delete_action: Action<i64, ()>) -> impl IntoView {
                                     <div style="display: flex; gap: 12px;">
                                         <button
                                             on:click=move |_| editing.set(true)
-                                            style="background: transparent; border: none; color: #26e6e6; cursor: pointer; font-size: 0.85rem; font-weight: 600;"
+                                            style="background: transparent; color: #00c2e0; border: 1px solid rgba(0, 194, 224, 0.35); padding: 6px 14px; border-radius: 4px; font-size: 0.85rem; font-weight: 500; cursor: pointer;"
+                                            onmouseenter="this.style.background='rgba(0, 194, 224, 0.04)';"
+                                            onmouseleave="this.style.background='transparent';"
                                         >
                                             "Edit"
                                         </button>
                                         <button
                                             on:click=move |_| { delete_action.dispatch(post_id); }
-                                            style="background: transparent; border: none; color: #ff7bf2; cursor: pointer; font-size: 0.85rem; font-weight: 600;"
+                                            style="background: transparent; color: #ff7bf2; border: 1px solid rgba(255, 123, 242, 0.3); padding: 6px 14px; border-radius: 4px; font-size: 0.85rem; font-weight: 500; cursor: pointer;"
+                                            onmouseenter="this.style.background='rgba(255, 123, 242, 0.05)';"
+                                            onmouseleave="this.style.background='transparent';"
                                         >
                                             "Delete"
                                         </button>

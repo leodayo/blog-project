@@ -53,7 +53,7 @@ pub fn CreatePostForm(on_post_created: impl Fn(()) + Clone + 'static) -> impl In
                     <input
                         type="text"
                         placeholder="Post Title"
-                        style=crate::pages::home::INPUT_STYLE
+                        style=crate::components::styles::INPUT_STYLE
                         onfocus="this.style.borderColor='#00f0ff'"
                         onblur="this.style.borderColor='rgba(226, 232, 240, 1)'"
                         prop:value=move || title.get()
@@ -63,7 +63,7 @@ pub fn CreatePostForm(on_post_created: impl Fn(()) + Clone + 'static) -> impl In
                 <div style="margin-bottom: 16px;">
                     <textarea
                         placeholder="Share your data..."
-                        style=format!("{} resize: vertical;", crate::pages::home::INPUT_STYLE)
+                        style=format!("{} resize: vertical;", crate::components::styles::INPUT_STYLE)
                         onfocus="this.style.borderColor='#00f0ff'"
                         onblur="this.style.borderColor='rgba(226, 232, 240, 1)'"
                         prop:value=move || content.get()
@@ -72,15 +72,13 @@ pub fn CreatePostForm(on_post_created: impl Fn(()) + Clone + 'static) -> impl In
                     />
                 </div>
                 <div style="display: flex; justify-content: flex-end;">
-                    <button type="submit" disabled=move || loading.get() style="
-                        background: #2d3748;
-                        color: #00f0ff;
-                        border: 1px solid rgba(0, 240, 255, 0.3);
-                        padding: 8px 20px;
-                        border-radius: 6px;
-                        font-weight: bold;
-                        cursor: pointer;
-                    ">
+                    <button
+                        type="submit"
+                        disabled=move || loading.get()
+                        style=crate::components::styles::BTN_CYAN
+                        onmouseenter="this.style.background='rgba(0, 240, 255, 0.05)';"
+                        onmouseleave="this.style.background='transparent';"
+                    >
                         {move || if loading.get() { "Publishing..." } else { "Submit" }}
                     </button>
                 </div>
@@ -121,7 +119,7 @@ pub fn EditPostForm(
                     match api::update_post(post_id, &input_title, &input_content, &token).await {
                         Ok(updated) => {
                             state.posts.update(|posts| {
-                                if let Some(existing) = posts.iter_mut().find(|p| p.id == post_id) {
+                                if let Some(existing) = posts.iter_mut().find(|p| p.id == id) {
                                     *existing = updated;
                                 }
                             });
@@ -146,14 +144,14 @@ pub fn EditPostForm(
                 <div style="margin-bottom: 12px;">
                     <input
                         type="text"
-                        style=crate::pages::home::INPUT_STYLE
+                        style=crate::components::styles::INPUT_STYLE
                         prop:value=move || title.get()
                         on:input=move |ev| title.set(event_target_value(&ev))
                     />
                 </div>
                 <div style="margin-bottom: 12px;">
                     <textarea
-                        style=crate::pages::home::INPUT_STYLE
+                        style=crate::components::styles::INPUT_STYLE
                         prop:value=move || content.get()
                         on:input=move |ev| content.set(event_target_value(&ev))
                         rows=3
