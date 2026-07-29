@@ -1,14 +1,18 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+mod api;
+mod app;
+mod components;
+mod dto;
+mod error;
+mod pages;
+mod state;
+mod storage;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use app::App;
+use leptos::prelude::*;
+use wasm_bindgen::prelude::*;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[wasm_bindgen]
+pub fn hydrate() {
+    console_error_panic_hook::set_once();
+    mount_to_body(|| view! { <App /> });
 }
