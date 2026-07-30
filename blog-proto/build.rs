@@ -15,15 +15,12 @@ fn main() -> Result<(), std::io::Error> {
     tonic_prost_build::configure()
         .build_server(true)
         .build_client(true)
-        // .extern_path(".google.protobuf", "::pbjson_types")
-        // .compile_protos(&["proto/blog.proto"], &["proto"])?;
         .compile_with_config(config, &["proto/blog.proto"], &["proto"])?;
 
     let descriptor_set = std::fs::read(descriptor_path)?;
     pbjson_build::Builder::new()
         .register_descriptors(&descriptor_set)
         .unwrap()
-        //     .exclude(prefixes)
         .build(&[".blog"])
         .unwrap();
 
