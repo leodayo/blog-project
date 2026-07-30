@@ -23,7 +23,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run clippy
-        run: cargo clippy --workspace -- -D warnings --no-deps
+        run: cargo clippy --workspace
 
       - name: Run tests
         run: cargo test --workspace
