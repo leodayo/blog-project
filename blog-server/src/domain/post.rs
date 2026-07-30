@@ -16,7 +16,7 @@ impl From<Post> for blog_proto::Post {
         blog_proto::Post {
             id: post.id,
             title: post.title,
-            content: post.content.unwrap_or_else(|| String::new()),
+            content: post.content.unwrap_or_default(),
             author_id: post.author_id,
             created_at: Some(post.created_at.into()),
             updated_at: Some(post.updated_at.into()),

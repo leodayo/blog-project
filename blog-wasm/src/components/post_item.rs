@@ -99,8 +99,8 @@ pub fn PostItem(post: Post, delete_action: Action<i64, ()>) -> impl IntoView {
                     id=post_id
                     title=title_sig
                     content=content_sig
-                    on_cancel=on_cancel.clone()
-                    on_saved=on_saved.clone()
+                    on_cancel=on_cancel
+                    on_saved=on_saved
                 />
             </Show>
         </li>

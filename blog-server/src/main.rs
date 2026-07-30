@@ -58,11 +58,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         jwt_service.clone(),
     ));
     let blog_service = Arc::new(BlogService::new(post_repository.clone()));
-    let grpc_service = BlogGrpcService::new(
-        auth_service.clone(),
-        blog_service.clone(),
-        jwt_service.clone(),
-    );
+    let grpc_service = BlogGrpcService::new(auth_service.clone(), blog_service.clone());
 
     let grpc_server = tonic::transport::Server::builder()
         .add_service(BlogServiceServer::with_interceptor(

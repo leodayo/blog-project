@@ -31,6 +31,12 @@ pub fn grpc_auth_interceptor<T>(
 }
 
 pub trait TonicAuthExt {
+    // UserContext is not used as of now,
+    // yet it's something extremely common
+    // that will most likely be widely used
+    // in futute if this project will be
+    // maintained
+    #[allow(dead_code)]
     fn user_context(&self) -> UserContext;
     fn require_authenticated(&self) -> Result<UserContext, Status>;
 }

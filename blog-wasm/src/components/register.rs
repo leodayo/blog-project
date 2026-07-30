@@ -14,7 +14,6 @@ pub fn RegisterForm() -> impl IntoView {
             let username = username.clone();
             let email = email.clone();
             let password = password.clone();
-            let state = state.clone();
 
             async move {
                 match api::register(&username, &email, &password).await {

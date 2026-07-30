@@ -31,10 +31,10 @@ impl UserRepository {
         .fetch_one(&self.pool)
         .await
         .map_err(|e| {
-            if let sqlx::Error::Database(db_err) = &e {
-                if db_err.constraint().is_some() {
-                    return AppError::UserAlreadyExists;
-                }
+            if let sqlx::Error::Database(db_err) = &e
+                && db_err.constraint().is_some()
+            {
+                return AppError::UserAlreadyExists;
             }
 
             AppError::Db(e)

@@ -14,7 +14,6 @@ pub fn CreatePostForm(on_post_created: impl Fn(()) + Clone + 'static) -> impl In
         Action::new_local(move |(input_title, input_content): &(String, String)| {
             let input_title = input_title.clone();
             let input_content = input_content.clone();
-            let state = state.clone();
             let on_post_created = on_post_created.clone();
 
             async move {
@@ -111,7 +110,6 @@ pub fn EditPostForm(
             let input_title = input_title.clone();
             let input_content = input_content.clone();
             let post_id = id;
-            let state = state.clone();
             let on_saved = on_saved.clone();
 
             async move {

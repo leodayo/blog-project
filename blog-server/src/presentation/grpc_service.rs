@@ -3,32 +3,25 @@ use std::sync::Arc;
 use blog_proto::blog_service_server::BlogService;
 use blog_proto::{
     AuthResponse, CreatePostRequest, DeletePostRequest, GetPostRequest, ListPostsRequest,
-    ListPostsResponse, LoginRequest, Post, RegisterRequest, UpdatePostRequest, User,
+    ListPostsResponse, LoginRequest, Post, RegisterRequest, UpdatePostRequest,
 };
 use pbjson_types::Empty;
 use tonic::{Request, Response, Status};
 
 use crate::application::auth_service::AuthService;
 use crate::application::blog_service::BlogService as AppBlogService;
-use crate::infrastructure::jwt::JwtService;
 use crate::presentation::grpc_middleware::TonicAuthExt;
 
 pub struct BlogGrpcService {
     auth_service: Arc<AuthService>,
     blog_service: Arc<AppBlogService>,
-    jwt_service: Arc<JwtService>,
 }
 
 impl BlogGrpcService {
-    pub fn new(
-        auth_service: Arc<AuthService>,
-        blog_service: Arc<AppBlogService>,
-        jwt_service: Arc<JwtService>,
-    ) -> Self {
+    pub fn new(auth_service: Arc<AuthService>, blog_service: Arc<AppBlogService>) -> Self {
         Self {
             auth_service,
             blog_service,
-            jwt_service,
         }
     }
 }
@@ -126,7 +119,7 @@ impl BlogService for BlogGrpcService {
 
         Ok(Response::new(ListPostsResponse {
             posts: proto_posts,
-            total: total,
+            total,
         }))
     }
 }

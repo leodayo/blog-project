@@ -18,14 +18,10 @@ pub fn HomePage() -> impl IntoView {
     let show_auth_panel = RwSignal::new(false);
     let auth_mode_register = RwSignal::new(false);
 
-    let state_for_action = state.clone();
-    let load_posts = Action::new_local(move |_| {
-        let state = state_for_action.clone();
-        async move {
-            if let Ok(resp) = api::list_posts(DEFAULT_LIMIT, DEFAULT_OFFSET).await {
-                state.posts.set(resp.posts);
-                state.total.set(resp.total);
-            }
+    let load_posts = Action::new_local(move |_| async move {
+        if let Ok(resp) = api::list_posts(DEFAULT_LIMIT, DEFAULT_OFFSET).await {
+            state.posts.set(resp.posts);
+            state.total.set(resp.total);
         }
     });
 

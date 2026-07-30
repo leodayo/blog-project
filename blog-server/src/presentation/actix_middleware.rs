@@ -37,6 +37,7 @@ impl FromRequest for UserContext {
     }
 }
 
+#[allow(clippy::type_complexity)]
 pub fn create_auth_middleware(
     jwt_service: Arc<JwtService>,
 ) -> HttpAuthentication<

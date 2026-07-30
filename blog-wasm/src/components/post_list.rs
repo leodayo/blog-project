@@ -9,15 +9,14 @@ pub fn PostList(loading: Memo<bool>) -> impl IntoView {
 
     let delete_action = Action::new_local(move |id: &i64| {
         let id = *id;
-        let state = state.clone();
         async move {
-            if let Some(token) = state.token.get() {
-                if api::delete_post(id, &token).await.is_ok() {
-                    let old_posts = state.posts.get_untracked();
-                    let filtered = old_posts.into_iter().filter(|p| p.id != id).collect();
-                    state.posts.set(filtered);
-                    state.total.update(|t| *t = (*t - 1).max(0));
-                }
+            if let Some(token) = state.token.get()
+                && api::delete_post(id, &token).await.is_ok()
+            {
+                let old_posts = state.posts.get_untracked();
+                let filtered = old_posts.into_iter().filter(|p| p.id != id).collect();
+                state.posts.set(filtered);
+                state.total.update(|t| *t = (*t - 1).max(0));
             }
         }
     });

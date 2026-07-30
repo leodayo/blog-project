@@ -123,10 +123,10 @@ impl GrpcRequestBuilder {
 
     fn prepare_request<T>(&self, message: T) -> Request<T> {
         let mut req = Request::new(message);
-        if let Some(token) = &self.token {
-            if let Ok(meta_val) = MetadataValue::try_from(format!("Bearer {}", token)) {
-                req.metadata_mut().insert("authorization", meta_val);
-            }
+        if let Some(token) = &self.token
+            && let Ok(meta_val) = MetadataValue::try_from(format!("Bearer {}", token))
+        {
+            req.metadata_mut().insert("authorization", meta_val);
         }
         req
     }

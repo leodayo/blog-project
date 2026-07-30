@@ -14,7 +14,6 @@ pub fn LoginForm() -> impl IntoView {
         Action::new_local(move |(input_username, input_password): &(String, String)| {
             let input_username = input_username.clone();
             let input_password = input_password.clone();
-            let state = state.clone();
 
             async move {
                 match api::login(&input_username, &input_password).await {

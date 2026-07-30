@@ -19,10 +19,10 @@ pub fn load_token() -> Option<String> {
 }
 
 pub fn save_user(user: &User) {
-    if let Some(storage) = get_storage() {
-        if let Ok(serialized) = serde_json::to_string(user) {
-            let _ = storage.set_item(USER_KEY, &serialized);
-        }
+    if let Some(storage) = get_storage()
+        && let Ok(serialized) = serde_json::to_string(user)
+    {
+        let _ = storage.set_item(USER_KEY, &serialized);
     }
 }
 

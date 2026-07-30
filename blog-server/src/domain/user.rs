@@ -21,6 +21,7 @@ impl From<User> for blog_proto::User {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct AuthenticatedUser {
     pub id: i64,
