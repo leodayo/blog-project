@@ -9,7 +9,21 @@ use crate::{
     error::ApiError,
 };
 
-const API_PATH: &str = "http://localhost:8080/api";
+fn api_base_url() -> String {
+    let fallback = "http://localhost:8080/api".to_string();
+    let window = match web_sys::window() {
+        Some(w) => w,
+        None => return fallback,
+    };
+    let origin = match window.location().origin() {
+        Ok(o) => o,
+        Err(_) => return fallback,
+    };
+    if origin.is_empty() {
+        return fallback;
+    }
+    format!("{}/api", origin)
+}
 
 async fn request<T, B>(
     method: Method,
@@ -21,7 +35,7 @@ where
     T: DeserializeOwned,
     B: Serialize,
 {
-    let url = format!("{}{}", API_PATH, path);
+    let url = format!("{}{}", api_base_url(), path);
     let mut req = RequestBuilder::new(&url).method(method);
 
     if let Some(token) = token {
@@ -92,7 +106,7 @@ pub async fn update_post(
 }
 
 pub async fn delete_post(id: i64, token: &str) -> Result<(), ApiError> {
-    let url = format!("{}{}/posts/{}", API_PATH, "", id);
+    let url = format!("{}{}/posts/{}", api_base_url(), "", id);
     let mut req = RequestBuilder::new(&url).method(Method::DELETE);
     req = req.header("Authorization", &format!("Bearer {}", token));
 
