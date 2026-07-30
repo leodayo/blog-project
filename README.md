@@ -78,13 +78,13 @@ Make sure the backend server is running (CORS is configured via env variables).
 
 | Command | Description |
 |---------|-------------|
-| register \-\-username <u> \-\-email <e> \-\-password <p> | Create a new user |
-| login \-\-username <u> \-\-password <p> | Log in and save token |
-| create \-\-title <t> \-\-content <c> | Create a new post (auth required) |
-| get \-\-id <id> | Get a single post |
-| update \-\-id <id> \-\-title <t> \-\-content <c> | Update a post (auth required, author only) |
-| delete \-\-id <id> | Delete a post (auth required, author only) |
-| list \-\-limit <n> \-\-offset <o> | List posts with pagination |
+| register \-\-username \<u\> \-\-email \<e\> \-\-password \<p\> | Create a new user |
+| login \-\-username \<u\> \-\-password \<p\> | Log in and save token |
+| create \-\-title \<t\> \-\-content \<c\> | Create a new post (auth required) |
+| get \-\-id \<id\> | Get a single post |
+| update \-\-id \<id\> \-\-title \<t\> \-\-content \<c\> | Update a post (auth required, author only) |
+| delete \-\-id \<id\> | Delete a post (auth required, author only) |
+| list \-\-limit \<n\> \-\-offset \<o\> | List posts with pagination |
 
 ## Future Improvements
 - Testing: add comprehensive unit and integration tests, refactor repositories to use Executor for better test isolation.
