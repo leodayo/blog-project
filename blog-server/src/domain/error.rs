@@ -13,7 +13,7 @@ pub enum AppError {
     PostNotFound(i64),
     #[error("Permission denied")]
     Forbidden,
-    #[error("Authentication requierd")]
+    #[error("Authentication required")]
     Unauthenticated,
     #[error("Database error: {0}")]
     Db(#[from] sqlx::Error),

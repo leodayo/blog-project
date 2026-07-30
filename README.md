@@ -7,6 +7,11 @@ A full‑stack blog system built with Rust, featuring:
 - CLI client (HTTP and gRPC)
 - WASM frontend (Leptos)
 
+## Demo
+Check out the demo here:
+> https://leodayo.myddns.me/
+Hopefully it's still up and running when/if you decide to check.
+
 ## Project Structure
 ```
 - blog-proto/         shared protobuf definitions (generated code)
